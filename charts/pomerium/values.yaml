@@ -8,6 +8,8 @@ fullnameOverride: ""
 config:
   # routes under this wildcard domain are handled by pomerium
   rootDomain: corp.beyondperimeter.com
+
+  # secret value initialization
   existingSecret: ""
   existingCASecret: ""
   ca:
@@ -15,11 +17,15 @@ config:
     key: ""
   sharedSecret: ""
   cookieSecret: ""
+  generateSharedSecrets: true
+  lookupExistingSecrets: true
+  forceGenerateSharedSecrets: false
   generateTLS: true
   generateTLSAnnotations: {}
   forceGenerateTLS: false
   generateSigningKey: true
   forceGenerateSigningKey: false
+
   extraOpts: {}
   existingPolicy: ""
   insecure: false
