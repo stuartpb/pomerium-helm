@@ -405,7 +405,7 @@ grpc is used for insecure rather than http for istio compatibility
 {{/* Data Broker Storage Configuration */}}
 {{- define "pomerium.databroker.tlsEnv" -}}
 {{- if or .Values.databroker.storage.clientTLS.existingSecretName .Values.databroker.storage.clientTLS.cert  ( include "pomerium.redis.tlsCertsGenerated" . )}}
-- name: DATABROKER_STORAGE_CERT_FILE 
+- name: DATABROKER_STORAGE_CERT_FILE
   value: {{ include "pomerium.databroker.storage.clientTLS.path" . }}/tls.crt
 - name: DATABROKER_STORAGE_KEY_FILE
   value: {{ include "pomerium.databroker.storage.clientTLS.path" . }}/tls.key
@@ -422,12 +422,12 @@ grpc is used for insecure rather than http for istio compatibility
 - name: DATABROKER_STORAGE_CONNECTION_STRING
   valueFrom:
     secretKeyRef:
-      name: {{- include "pomerium.databroker.storage.secret.name" -}}
+      name: {{ include "pomerium.databroker.storage.secret.name" . }}
       key: DATABROKER_STORAGE_CONNECTION_STRING
 - name: DATABROKER_STORAGE_TLS_SKIP_VERIFY
   valueFrom:
     secretKeyRef:
-      name: {{- include "pomerium.databroker.storage.secret.name" -}}
+      name: {{ include "pomerium.databroker.storage.secret.name" . }}
       key: DATABROKER_STORAGE_TLS_SKIP_VERIFY
 {{- end  }}
 {{- end -}}
@@ -437,17 +437,16 @@ grpc is used for insecure rather than http for istio compatibility
 - name: SHARED_SECRET
   valueFrom:
     secretKeyRef:
-      name: {{- include "pomerium.sharedSecrets.name" -}}
+      name: {{ include "pomerium.sharedSecrets.name" . }}
       key: SHARED_SECRET
 {{- end }}
 {{- if or .Values.config.generateSharedSecrets .Values.config.cookieSecret }}
 - name: COOKIE_SECRET
   valueFrom:
     secretKeyRef:
-      name: {{- include "pomerium.sharedSecrets.name" -}}
+      name: {{ include "pomerium.sharedSecrets.name" . }}
       key: COOKIE_SECRET
 {{- end }}
-{{- end -}}
 {{- end -}}
 
 {{/*Creates static configuration yaml */}}
@@ -508,7 +507,6 @@ idp_client_secret: {{ .Values.authenticate.idp.clientSecret }}
 idp_service_account: {{ include "pomerium.idp.serviceAccount" . }}
 {{- end }}
 databroker_storage_type: {{ include "pomerium.databroker.storage.type" . }}
-{{- end  }}
 {{- end -}}
 
 {{/* Creates dynamic configuration yaml */}}
@@ -574,6 +572,15 @@ policy:
 {{- .Values.authenticate.idp.serviceAccount -}}
 {{- else -}}
 {{- .Values.authenticate.idp.serviceAccountYAML | toJson | b64enc -}}
+{{- end -}}
+{{- end -}}
+
+{{/* Expand databroker storage type */}}
+{{- define "pomerium.databroker.storage.type" -}}
+{{- if .Values.redis.enabled -}}
+redis
+{{- else -}}
+{{- .Values.databroker.storage.type -}}
 {{- end -}}
 {{- end -}}
 

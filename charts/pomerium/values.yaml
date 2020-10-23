@@ -125,6 +125,7 @@ cache:
 databroker:
   storage:
     type: "memory"
+    autoconfigure: true
     connectionString: ""
     tlsSkipVerify: false
     clientTLS:
